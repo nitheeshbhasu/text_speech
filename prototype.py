@@ -1,8 +1,7 @@
 import streamlit as st
 import speech_recognition as sr
-import sounddevice as sd
-import numpy as np
 from gtts import gTTS
+import os
 
 # Function to recognize speech
 def speech_to_text():
