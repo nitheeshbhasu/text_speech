@@ -1,6 +1,6 @@
 streamlit
-speechrecognition
-gtts
-pydub
+speechrecognition==3.8.1
+gtts==2.3.2
+pydub==0.25.1
 numpy
-pyaudio
+pyaudio==0.2.13
