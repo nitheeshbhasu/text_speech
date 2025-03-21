@@ -1,3 +1,5 @@
 streamlit
 speechrecognition
 gtts
+pydub
+base64
