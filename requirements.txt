@@ -1,5 +1,6 @@
 streamlit
-speechrecognition
 gtts
 sounddevice
 numpy
+openai-whisper
+torch
