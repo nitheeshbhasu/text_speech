@@ -1,31 +1,30 @@
-import base64
 import streamlit as st
+import speech_recognition as sr
 import sounddevice as sd
 import numpy as np
-import whisper
 from gtts import gTTS
 
-# Load Whisper model
-model = whisper.load_model("base")
-
-# Function to record audio
-def record_audio(duration=5, samplerate=44100):
-    st.info("Recording... Speak now!")
-    audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype=np.int16)
-    sd.wait()
-    return audio
-
-# Function to transcribe speech using Whisper
+# Function to recognize speech
 def speech_to_text():
-    audio_data = record_audio()
-    np.save("audio.npy", audio_data)  # Save as .npy file
-    result = model.transcribe("audio.npy")  # Transcribe using Whisper
-    text = result["text"]
-    st.success(f"You said: {text}")
-    return text
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        st.info("Listening... Speak now!")
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+
+    try:
+        text = recognizer.recognize_google(audio)
+        st.success(f"You said: {text}")
+        return text
+    except sr.UnknownValueError:
+        st.error("Sorry, could not understand what you said.")
+        return None
+    except sr.RequestError as e:
+        st.error(f"Could not request results: {e}")
+        return None
 
 # Function to convert text to speech
-def text_to_speech(text, language, filename='output.mp3'):
+def text_to_speech(text, language="en", filename="output.mp3"):
     tts = gTTS(text=text, lang=language)
     tts.save(filename)
     return filename
@@ -39,7 +38,8 @@ if option == "Speech-to-Text":
     st.subheader("🎙️ Speech-to-Text")
     if st.button("Start Speech Recognition"):
         text = speech_to_text()
-        st.text_area("Recognized Text:", text)
+        if text:
+            st.text_area("Recognized Text:", text)
 
 elif option == "Text-to-Speech":
     st.subheader("🔊 Text-to-Speech")
